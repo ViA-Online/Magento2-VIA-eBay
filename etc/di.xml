@@ -1,0 +1,131 @@
+<?xml version="1.0"?>
+<!--
+  ~ Copyright (c) 2017 ViA-Online GmbH. All rights reserved.
+  -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+    <!-- Custom logging -->
+    <preference for="Magento\Framework\DB\LoggerInterface" type="Magento\Framework\DB\Logger\File"/>
+
+    <type name="VIAeBay\Connector\Logger\FileHandler">
+        <arguments>
+            <argument name="filesystem" xsi:type="object">Magento\Framework\Filesystem\Driver\File</argument>
+        </arguments>
+    </type>
+    <type name="VIAeBay\Connector\Logger\Logger">
+        <arguments>
+            <argument name="name" xsi:type="string">VIA-eBay</argument>
+            <argument name="handlers"  xsi:type="array">
+                <item name="a" xsi:type="object">VIAeBay\Connector\Logger\FileHandler</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- Command line commands -->
+    <type name="Magento\Framework\Console\CommandList">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="viaebay_order_import"
+                      xsi:type="object">VIAeBay\Connector\Console\Command\Order\ImportCommand</item>
+                <item name="viaebay_catalog_category_export"
+                      xsi:type="object">VIAeBay\Connector\Console\Command\Catalog\Category\ExportCommand</item>
+                <item name="viaebay_backlog_process"
+                      xsi:type="object">VIAeBay\Connector\Console\Command\Backlog\ProcessCommand</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Magento\Framework\EntityManager\MetadataPool">
+        <arguments>
+            <argument name="metadata" xsi:type="array">
+                <item name="VIAeBay\Connector\Api\Data\ProductRepositoryInterface" xsi:type="array">
+                    <item name="entityTableName" xsi:type="string">viaebay_product</item>
+                    <item name="identifierField" xsi:type="string">viaebay_product_id</item>
+                    <item name="entityContext" xsi:type="array">
+                        <item name="store" xsi:type="string">Magento\Store\Model\StoreScopeProvider</item>
+                    </item>
+
+                </item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- Repositories -->
+    <preference for="VIAeBay\Connector\Api\Backlog\ProductRepositoryInterface"
+                type="VIAeBay\Connector\Model\Backlog\ProductRepository" />
+    <preference for="VIAeBay\Connector\Api\AttributeRepositoryInterface"
+                type="VIAeBay\Connector\Model\AttributeRepository" />
+    <preference for="VIAeBay\Connector\Api\CategoryRepositoryInterface"
+                type="VIAeBay\Connector\Model\CategoryRepository" />
+    <preference for="VIAeBay\Connector\Api\CustomerRepositoryInterface"
+                type="VIAeBay\Connector\Model\CustomerRepository" />
+    <preference for="VIAeBay\Connector\Api\OrderRepositoryInterface"
+                type="VIAeBay\Connector\Model\OrderRepository" />
+    <preference for="VIAeBay\Connector\Api\ProductRepositoryInterface"
+                type="VIAeBay\Connector\Model\ProductRepository" />
+
+    <!-- Services -->
+    <type name="VIAeBay\Connector\Service\Backlog" shared="true" />
+    <type name="VIAeBay\Connector\Service\Category" shared="true" />
+    <type name="VIAeBay\Connector\Service\Order" shared="true" />
+    <type name="VIAeBay\Connector\Service\Product" shared="true" />
+    <type name="VIAeBay\Connector\OData\Client" shared="true" />
+
+    <!-- Plugins -->
+    <type name="Magento\CatalogInventory\Model\ResourceModel\Stock\Item">
+        <plugin name="viaebay_plugin_cataloginventory_model_resourcemodel_stock_item"
+                type="VIAeBay\Connector\Plugin\CatalogInventory\Model\ResourceModel\Stock\Item\Plugin"
+                sortOrder="1"
+                disabled="false" />
+    </type>
+
+    <type name="Magento\Sales\Model\ResourceModel\Order\Shipment">
+        <plugin name="viaebay_plugin_sales_model_resourcemodel_order_shipment"
+                type="VIAeBay\Connector\Plugin\Sales\Model\ResourceModel\Order\Shipment\Plugin"
+                sortOrder="1"
+                disabled="false" />
+    </type>
+
+    <type name="Magento\Sales\Model\ResourceModel\Order\Shipment\Track">
+        <plugin name="viaebay_plugin_sales_resourcemodel_order_shipment_track"
+                type="VIAeBay\Connector\Plugin\Sales\Model\ResourceModel\Order\Shipment\Track\Plugin"
+                sortOrder="1"
+                disabled="false" />
+    </type>
+
+    <type name="Magento\Catalog\Controller\Adminhtml\Product\Action\Attribute\Save">
+        <plugin name="viaebay_plugin_catalog_controller_adminhtml_product_action_attribute_save"
+                type="VIAeBay\Connector\Plugin\Catalog\Controller\Adminhtml\Product\Action\Attribute\Save\Plugin"
+                sortOrder="1"
+                disabled="false" />
+    </type>
+
+    <!--type name="Magento\Catalog\Api\ProductRepositoryInterface">
+        <plugin name="viaebay_plugin_catalog_api_productrepositoryinterface"
+                type="VIAeBay\Connector\Plugin\Catalog\Api\ProductRepositoryInterface\Plugin"
+                sortOrder="1"
+                disabled="false" />
+    </type-->
+
+    <!--type name="Magento\Framework\EntityManager\Operation\ExtensionPool">
+        <arguments>
+            <argument name="extensionActions" xsi:type="array">
+                <item name="Magento\Catalog\Api\Data\ProductInterface" xsi:type="array">
+                    <item name="read" xsi:type="array">
+                        <item name="viaebay_connector_product_read" xsi:type="string">VIAeBay\Connector\Model\Product\ReadHandler</item>
+                    </item>
+                    <item name="create" xsi:type="array">
+                        <item name="viaebay_connector_product_create" xsi:type="string">VIAeBay\Connector\Model\Product\CreateHandler</item>
+                    </item>
+                    <item name="update" xsi:type="array">
+                        <item name="viaebay_connector_product_update" xsi:type="string">VIAeBay\Connector\Model\Product\UpdateHandler</item>
+                    </item>
+                    <item name="delete" xsi:type="array">
+                        <item name="viaebay_connector_product_delete" xsi:type="string">VIAeBay\Connector\Model\Product\DeleteHandler</item>
+                    </item>
+                </item>
+            </argument>
+        </arguments>
+    </type-->
+</config>

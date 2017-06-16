@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!--
+  ~ Copyright (c) 2017 ViA-Online GmbH. All rights reserved.
+  -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="VIAeBay_Connector::connector" title="VIA-eBay" translate="title" module="VIAeBay_Connector"
+             sortOrder="60" resource="VIAeBay_Connector::connector"/>
+
+        <add id="VIAeBay_Connector::viaebay_connector/backlog/product_menu" title="Backlog"
+             module="VIAeBay_Connector" sortOrder="10" parent="VIAeBay_Connector::connector"
+             action="viaebay_connector/backlog_product/index" resource="VIAeBay_Connector::backlog"/>
+
+        <add id="VIAeBay_Connector::viaebay_connector/attribute/index_menu" title="Attribute"
+             module="VIAeBay_Connector" sortOrder="100" parent="VIAeBay_Connector::connector"
+             action="viaebay_connector/attribute/index" resource="VIAeBay_Connector::attribute"/>
+
+        <add id="VIAeBay_Connector::viaebay_connector/order/index_menu" title="Orders"
+             module="VIAeBay_Connector" sortOrder="50" parent="VIAeBay_Connector::connector"
+             action="viaebay_connector/order/index" resource="VIAeBay_Connector::order"/>
+    </menu>
+</config>

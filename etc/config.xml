@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!--
+  ~ Copyright (c) 2017 ViA-Online GmbH. All rights reserved.
+  -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <payment>
+            <viaebaypayment>
+                <active>1</active>
+                <model>VIAeBay\Connector\Model\Payment\VIAeBayPayment</model>
+                <order_status>pending</order_status>
+                <title>VIA-eBay Payment</title>
+                <allowspecific>0</allowspecific>
+                <sort_order>1</sort_order>
+            </viaebaypayment>
+        </payment>
+        <carriers>
+            <viaebayshipping>
+                <active>1</active>
+                <allowed_methods>m2eproshipping</allowed_methods>
+                <methods>m2eproshipping</methods>
+                <sallowspecific>0</sallowspecific>
+                <model>VIAeBay\Connector\Model\Carrier\VIAeBayCarrier</model>
+                <name>VIA-eBay Shipping</name>
+                <title>VIA-eBay Shipping</title>
+            </viaebayshipping>
+        </carriers>
+    </default>
+</config>

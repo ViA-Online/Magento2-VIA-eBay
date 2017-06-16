@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!--
+  ~ Copyright (c) 2017 ViA-Online GmbH. All rights reserved.
+  -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
+    <acl>
+        <resources>
+            <resource id="Magento_Backend::admin">
+                <resource id="Magento_Backend::stores">
+                    <resource id="Magento_Backend::stores_settings">
+                        <resource id="Magento_Config::config">
+                            <resource id="VIAeBay_Connector::config" title="VIA-eBay Configuration" sortOrder="50"/>
+                        </resource>
+                    </resource>
+                </resource>
+                <resource id="VIAeBay_Connector::top" title="VIA-eBay">
+                    <resource id="VIAeBay_Connector::backlog" title="Backlog"/>
+                    <resource id="VIAeBay_Connector::product" title="Products"/>
+                    <resource id="VIAeBay_Connector::attribute" title="Attribute">
+                        <resource id="VIAeBay_Connector::attribute_save" title="Save"/>
+                        <resource id="VIAeBay_Connector::attribute_delete" title="Delete"/>
+                    </resource>
+                    <resource id="VIAeBay_Connector::order" title="Orders"/>
+                </resource>
+            </resource>
+        </resources>
+    </acl>
+</config>

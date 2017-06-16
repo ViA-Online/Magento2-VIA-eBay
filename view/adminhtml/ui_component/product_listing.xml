@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2017 ViA-Online GmbH. All rights reserved.
+  -->
+
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <listingToolbar name="listing_top">
+        <massaction name="listing_massaction">
+            <action name="viaebay">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="type" xsi:type="string">viaebay</item>
+                        <item name="label" xsi:type="string" translate="true">VIA-eBay Aktionen</item>
+                    </item>
+                </argument>
+                <argument name="actions" xsi:type="array">
+                    <item name="0" xsi:type="array">
+                        <item name="type" xsi:type="string">list_on_viaebay</item>
+                        <item name="label" xsi:type="string" translate="true">List on VIA-eBay</item>
+                        <item name="url" xsi:type="url" path="viaebay_connector/product/massList"/>
+                    </item>
+                    <item name="1" xsi:type="array">
+                        <item name="type" xsi:type="string">delete_on_viaebay</item>
+                        <item name="label" xsi:type="string" translate="true">Delete on VIA-eBay</item>
+                        <item name="url" xsi:type="url" path="viaebay_connector/product/massDelete"/>
+                    </item>
+                    <item name="2" xsi:type="array">
+                        <item name="type" xsi:type="string">add_to_viaebay_backlog</item>
+                        <item name="label" xsi:type="string" translate="true">Enqueue for listing</item>
+                        <item name="url" xsi:type="url" path="viaebay_connector/product/massAddToBacklog"/>
+                    </item>
+                </argument>
+            </action>
+        </massaction>
+    </listingToolbar>
+</listing>

@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<!--
+  ~ Copyright (c) 2017 ViA-Online GmbH. All rights reserved.
+  -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <!-- products -->
+
+    <event name="catalog_product_save_after">
+        <observer name="viaebay_observer_product_addupdate_after"
+                  instance="VIAeBay\Connector\Observer\Product\Save\After"
+                  shared="true" />
+    </event>
+    <event name="catalog_product_delete_before">
+        <observer name="viaebay_observer_product_delete"
+                  instance="VIAeBay\Connector\Observer\Product\Delete"
+                  shared="true" />
+    </event>
+
+    <!-- categories -->
+
+    <event name="catalog_category_change_products">
+        <observer name="viaebay_observer_category"
+                  instance="VIAeBay\Connector\Observer\Category\Change\Products"
+                  shared="false" />
+    </event>
+
+    <!-- invoice -->
+
+    <event name="sales_order_invoice_pay">
+        <observer name="viaebay_observer_sales_order_invoice_pay"
+                  instance="VIAeBay\Connector\Observer\Sales\Order\Invoice\Pay"
+                  shared="false" />
+    </event>
+
+</config>

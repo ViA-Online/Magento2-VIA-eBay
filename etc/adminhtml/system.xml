@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<!--
+  ~ Copyright (c) 2017 ViA-Online GmbH. All rights reserved.
+  -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <!-- VIA-eBay Tab -->
+        <tab id="viaebay" translate="label" sortOrder="300">
+            <label>VIA-eBay</label>
+        </tab>
+
+        <!-- Connector section -->
+        <section id="viaebay_connector" translate="label" type="text" sortOrder="140" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Connector</label>
+            <tab>viaebay</tab> <!-- Tab where section is linked -->
+            <resource>Magento_Config::config</resource>
+            
+            <!-- Account Setting Group -->
+            <group id="account_settings" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                <!-- Group configs -->
+                <label>Account Settings</label>
+                <attribute type="expanded">1</attribute>
+                <comment><![CDATA[Please configure your VIA-eBay account information.]]></comment>
+
+                <!-- Module enable -->
+                <field id="active" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Enable or disable VIA-eBay integration.]]></comment>
+                </field>
+
+                <!-- Store -->
+                <field id="store" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Store</label>
+                    <source_model>Magento\Config\Model\Config\Source\Store</source_model>
+                    <comment><![CDATA[Store used by this extension.]]></comment>
+                </field>
+
+                <!-- Module enable -->
+                <field id="sandbox" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Use Sandbox</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment><![CDATA[Use sandbox instead of production.]]></comment>
+                </field>
+
+                <!-- Username -->
+                <field id="username" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Username</label>
+                    <comment><![CDATA[Get your username at <a href="http://viaebay.de/ebay">http://viaebay.de/ebay</a>.]]></comment>
+                </field>
+
+                <!-- Username -->
+                <field id="password" translate="label" type="password" sortOrder="3" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Password</label>
+                    <comment><![CDATA[Get your password at <a href="http://viaebay.de/ebay">http://viaebay.de/ebay</a>.]]></comment>
+                </field>
+
+                <!-- API Key -->
+                <field id="api_key" translate="label" type="password" sortOrder="4"  showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>API Key</label>
+                    <comment><![CDATA[Get your API key at <a href="http://viaebay.de/ebay">http://viaebay.de/ebay</a>.]]></comment>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<!--
+  ~ Copyright (c) 2017 ViA-Online GmbH. All rights reserved.
+  -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Api/etc/extension_attributes.xsd">
+    <extension_attributes for="Magento\Catalog\Api\Data\CategoryInterface">
+        <attribute code="viaebay_id" type="int">
+            <join reference_table="viaebay_category" reference_field="category_id" join_on_field="entity_id">
+                <field>viaebay_id</field>
+            </join>
+        </attribute>
+    </extension_attributes>
+
+    <extension_attributes for="Magento\Sales\Api\Data\OrderInterface">
+        <attribute code="viaebay_id" type="int">
+            <join reference_table="viaebay_order" reference_field="order_id" join_on_field="entity_id">
+                <field>viaebay_id</field>
+            </join>
+        </attribute>
+    </extension_attributes>
+
+    <extension_attributes for="Magento\Sales\Api\Data\OrderItemInterface">
+        <attribute code="viaebay_id" type="int"/>
+    </extension_attributes>
+
+    <extension_attributes for="Magento\Catalog\Api\Data\ProductInterface">
+        <attribute code="vIAeBay_connector" type="VIAeBay\Connector\Api\Data\ProductInterface" />
+    </extension_attributes>
+    
+    <extension_attributes for="Magento\Eav\Api\Data\AttributeInterface">
+        <attribute code="viaebay_attribute" type="string">
+            <join reference_table="viaebay_attribute" reference_field="attribute_id" join_on_field="attribute_id">
+                <field column="type">viaebay_attribute</field>
+            </join>
+        </attribute>
+    </extension_attributes>
+
+    <extension_attributes for="Magento\Customer\Api\Data\CustomerInterface">
+        <attribute code="viaebay_id" type="int">
+            <join reference_table="viaebay_customer" reference_field="product_id" join_on_field="entity_id">
+                <field column="buyer_id">viaebay_id</field>
+            </join>
+        </attribute>
+        <attribute code="viaebay_name" type="string">
+            <join reference_table="viaebay_customer" reference_field="product_id" join_on_field="entity_id">
+                <field column="buyer_name">viaebay_name</field>
+            </join>
+        </attribute>
+    </extension_attributes>
+</config>

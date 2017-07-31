@@ -13,7 +13,7 @@ Install
 2. Run the following commands to install the module:
 
     ```bash
-        composer require ???/???
+        composer require viaebay/magento2-connector
         php bin/magento module:enable VIAeBay_Connector
         php bin/magento setup:upgrade
         php bin/magento setup:di:compile

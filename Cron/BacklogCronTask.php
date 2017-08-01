@@ -5,16 +5,16 @@
 
 namespace VIAeBay\Connector\Cron;
 
-use Magento\Framework\ObjectManagerInterface;
+use VIAeBay\Connector\Helper\State;
 use VIAeBay\Connector\Service\Category;
 use VIAeBay\Connector\Service\Product;
 
 class BacklogCronTask
 {
     /**
-     * @var ObjectManagerInterface
+     * @var State
      */
-    protected $objectManager;
+    protected $state;
 
     /**
      * @var Category
@@ -26,16 +26,23 @@ class BacklogCronTask
      */
     protected $productService;
 
-    public function __construct(ObjectManagerInterface $objectManager, Category $order, Product $product)
+    /**
+     * BacklogCronTask constructor.
+     * @param State $state
+     * @param Category $order
+     * @param Product $product
+     */
+    public function __construct(State $state, Category $order, Product $product)
     {
-        $this->objectManager = $objectManager;
+        $this->state = $state;
         $this->categoryService = $order;
         $this->productService = $product;
     }
 
     public function execute()
     {
-        $this->objectManager->get('Magento\Framework\App\State')->setAreaCode('adminhtml');
+        $this->state->initializeAreaCode();
+
         $this->categoryService->sync();
         $this->productService->exportProducts();
         return $this;

@@ -6,7 +6,6 @@
 namespace VIAeBay\Connector\Console\Command\Catalog\Category;
 
 
-use Magento\Framework\ObjectManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -16,10 +15,6 @@ use VIAeBay\Connector\Service\Product;
 class ExportCommand extends Command
 {
     /**
-     * @var ObjectManagerInterface
-     */
-    protected $_objectManager;
-    /**
      * @var Category
      */
     protected $_categoryService;
@@ -28,23 +23,36 @@ class ExportCommand extends Command
      */
     protected $_productService;
 
-    public function __construct(ObjectManagerInterface $objectManager, Category $categoryService, Product $productService, $name = null)
+    /**
+     * ExportCommand constructor.
+     * @param Category $categoryService
+     * @param Product $productService
+     * @param null $name
+     */
+    public function __construct(Category $categoryService, Product $productService, $name = null)
     {
-        $this->_objectManager = $objectManager;
         $this->_categoryService = $categoryService;
         $this->_productService = $productService;
         parent::__construct($name);
     }
 
+    /**
+     *
+     */
     protected function configure()
     {
         $this->setName('viaebay:catalog:category:export')->setDescription('Export categories');
         parent::configure();
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->_objectManager->get('Magento\Framework\App\State')->setAreaCode('adminhtml');
+        $output->writeln('Sync categories');
         $this->_categoryService->sync();
+        $output->writeln('Categories synced');
     }
 }

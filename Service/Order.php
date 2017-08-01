@@ -6,32 +6,33 @@
 namespace VIAeBay\Connector\Service;
 
 use GuzzleHttp\Psr7\Uri;
-use Magento\Catalog\Api\ProductRepositoryInterface;
+use Magento\Catalog\Api\ProductRepositoryInterface\Proxy as ProductRepositoryInterface;
 use Magento\Catalog\Model\Product\Type;
-use Magento\Catalog\Model\ProductRepository;
-use Magento\CatalogInventory\Api\StockItemRepositoryInterface;
-use Magento\CatalogInventory\Api\StockRegistryInterface;
-use Magento\Customer\Api\CustomerRepositoryInterface;
+use Magento\Catalog\Model\ProductRepository\Proxy as ProductRepository;
+use Magento\CatalogInventory\Api\StockItemRepositoryInterface\Proxy as StockItemRepositoryInterface;
+use Magento\CatalogInventory\Api\StockRegistryInterface\Proxy as StockRegistryInterface;
+use Magento\Customer\Api\CustomerRepositoryInterface\Proxy as CustomerRepositoryInterface;
 use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Customer\Model\AddressFactory as CustomerAddressFactory;
 use Magento\Customer\Model\Customer;
 use Magento\Customer\Model\CustomerFactory;
 use Magento\Framework\App\ResourceConnection;
+use Magento\Framework\Event\ManagerInterface\Proxy as ManagerInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Framework\ObjectManagerInterface;
-use Magento\Quote\Api\CartRepositoryInterface;
+use Magento\Framework\Stdlib\CookieManagerInterface\Proxy as CookieManagerInterface;
+use Magento\Quote\Api\CartRepositoryInterface\Proxy as CartRepositoryInterface;
 use Magento\Quote\Model\Cart\CurrencyFactory;
 use Magento\Quote\Model\Quote\Address\Rate;
 use Magento\Quote\Model\QuoteFactory;
-use Magento\Quote\Model\QuoteRepository;
-use Magento\Sales\Api\OrderManagementInterface;
-use Magento\Sales\Api\OrderRepositoryInterface;
+use Magento\Quote\Model\QuoteRepository\Proxy as QuoteRepository;
+use Magento\Sales\Api\OrderManagementInterface\Proxy as OrderManagementInterface;
+use Magento\Sales\Api\OrderRepositoryInterface\Proxy as OrderRepositoryInterface;
 use Magento\Sales\Model\Order\Address;
 use Magento\Sales\Model\Order\AddressFactory as OrderAddressFactory;
 use Magento\Sales\Model\Order\Invoice;
 use Magento\Sales\Model\Order\ItemFactory as OrderItemFactory;
-use Magento\Sales\Model\Order\Payment\Repository as OrderPaymentRepository;
+use Magento\Sales\Model\Order\Payment\Repository\Proxy as OrderPaymentRepository;
 use Magento\Sales\Model\Order\Shipment;
 use Magento\Sales\Model\Order\Shipment\Track;
 use Magento\Sales\Model\OrderFactory;
@@ -52,12 +53,17 @@ class Order
     const ORDER_IMPORT_FAILED = '_ORDER_IMPORT_FAILED_';
 
     /**
-     * @var ObjectManagerInterface
+     * @var \Magento\Framework\Stdlib\CookieManagerInterface
      */
-    private $objectManager;
+    private $cookieManager;
 
     /**
-     * @var ProductRepositoryInterface\
+     * @var \Magento\Framework\Event\ManagerInterface
+     */
+    private $eventManager;
+
+    /**
+     * @var ProductRepositoryInterface
      */
     private $productRepository;
 
@@ -176,7 +182,6 @@ class Order
     private $taxCalculation;
 
     /**
-     * @param ObjectManagerInterface $objectManager
      * @param ResourceConnection $resourceConnection
      * @param OrderManagementInterface $orderManagement
      * @param OrderRepositoryInterface $orderRepository
@@ -193,6 +198,9 @@ class Order
      * @param CustomerRepositoryInterface $customerRepository
      * @param CurrencyFactory $currencyFactory
      * @param Rate $shippingRate
+     * @param CookieManagerInterface $cookieManager
+     * @param ManagerInterface $eventManager
+     * @param TaxCalculationInterfaceProxy $taxCalculation
      * @param OrderPaymentRepository $paymentRepository
      * @param VIAOrderRepository $viaOrderRepository
      * @param VIAOrderFactory $viaOrderFactory
@@ -201,8 +209,7 @@ class Order
      * @param Client $client
      * @param Logger $logger
      */
-    public function __construct(ObjectManagerInterface $objectManager,
-                                ResourceConnection $resourceConnection,
+    public function __construct(ResourceConnection $resourceConnection,
                                 OrderManagementInterface $orderManagement,
                                 OrderRepositoryInterface $orderRepository,
                                 OrderFactory $orderFactory,
@@ -218,6 +225,8 @@ class Order
                                 CustomerRepositoryInterface $customerRepository,
                                 CurrencyFactory $currencyFactory,
                                 Rate $shippingRate,
+                                CookieManagerInterface $cookieManager,
+                                ManagerInterface $eventManager,
                                 TaxCalculationInterfaceProxy $taxCalculation,
                                 OrderPaymentRepository $paymentRepository,
                                 VIAOrderRepository $viaOrderRepository,
@@ -227,7 +236,8 @@ class Order
                                 Client $client,
                                 Logger $logger)
     {
-        $this->objectManager = $objectManager;
+        $this->cookieManager = $cookieManager;
+        $this->eventManager = $eventManager;
         $this->resourceConnection = $resourceConnection;
         $this->orderFactory = $orderFactory;
         $this->orderItemFactory = $orderItemFactory;
@@ -281,17 +291,14 @@ class Order
                 $filter = "(ForeignOrderId eq null) or (ForeignOrderId eq '')";
 
                 // Allow cookie update
-                $cookieManager = $this->objectManager->get('\Magento\Framework\Stdlib\CookieManagerInterface');
-                /* @var $cookieManager \Magento\Framework\Stdlib\CookieManagerInterface */
-
-                $cookieFilter = $cookieManager->getCookie('viaebay_order_filter');
+                $cookieFilter = $this->cookieManager->getCookie('viaebay_order_filter');
                 if ($cookieFilter == "null") {
                     $filter = null;
                 } else if (strlen($cookieFilter) > 0) {
                     $filter = $cookieFilter;
                 }
 
-                $cookieForce = $cookieManager->getCookie('viaebay_order_force');
+                $cookieForce = $this->cookieManager->getCookie('viaebay_order_force');
                 if ($cookieForce == "true") {
                     $force = true;
                 }
@@ -621,11 +628,10 @@ class Order
             $this->logger->addError((string)$e);
         }
 
-        $this->objectManager->get('Magento\Framework\Event\ManagerInterface')
-            ->dispatch('viaebay_order_invoice_new', [
-                'order' => $order,
-                'invoice' => $invoice
-            ]);
+        $this->eventManager->dispatch('viaebay_order_invoice_new', [
+            'order' => $order,
+            'invoice' => $invoice
+        ]);
 
         return $invoice;
     }

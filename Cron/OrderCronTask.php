@@ -5,15 +5,15 @@
 
 namespace VIAeBay\Connector\Cron;
 
-use Magento\Framework\ObjectManagerInterface;
+use VIAeBay\Connector\Helper\State;
 use VIAeBay\Connector\Service\Order;
 
 class OrderCronTask
 {
     /**
-     * @var ObjectManagerInterface
+     * @var State
      */
-    protected $objectManager;
+    protected $state;
 
     /**
      * @var Order
@@ -22,18 +22,19 @@ class OrderCronTask
 
     /**
      * ImportCommand constructor.
-     * @param ObjectManagerInterface $objectManager
+     * @param State $state
      * @param Order $orderService
      */
-    function __construct(ObjectManagerInterface $objectManager, Order $orderService)
+    function __construct(State $state, Order $orderService)
     {
-        $this->objectManager = $objectManager;
+        $this->state = $state;
         $this->orderService = $orderService;
     }
 
     public function execute()
     {
-        $this->objectManager->get('Magento\Framework\App\State')->setAreaCode('adminhtml');
+        $this->state->initializeAreaCode();
+
         $this->orderService->import();
         return $this;
     }

@@ -23,15 +23,34 @@ class Category
 {
     protected $extensionAttributesFactory;
 
+    /**
+     * @var CategoryFactory
+     */
     protected $categoryFactory;
+    /**
+     * @var CategoryHelper
+     */
     protected $categoryHelper;
+    /**
+     * @var CategoryRepository
+     */
     protected $categoryRepository;
+    /**
+     * @var CategoryResource
+     */
     protected $categoryResource;
-    protected $data;
+    /**
+     * @var Configuration
+     */
+    protected $configuration;
     /**
      * @var OData
      */
     protected $oData;
+
+    /**
+     * @var Client
+     */
     protected $client;
 
     protected $viaCategories;
@@ -48,7 +67,7 @@ class Category
      * @param CategoryHelper $categoryHelper
      * @param CategoryRepository $categoryRepository
      * @param CategoryResource $categoryResource
-     * @param Configuration $data
+     * @param Configuration $configuration
      * @param OData $oData
      * @param Client $client
      * @param Logger $logger
@@ -56,7 +75,7 @@ class Category
     public function __construct(ExtensionAttributesFactory $extensionAttributesFactory,
                                 CategoryFactory $categoryFactory, CategoryHelper $categoryHelper,
                                 CategoryRepository $categoryRepository, CategoryResource $categoryResource,
-                                Configuration $data, OData $oData, Client $client, Logger $logger)
+                                Configuration $configuration, OData $oData, Client $client, Logger $logger)
     {
         $this->extensionAttributesFactory = $extensionAttributesFactory;
 
@@ -64,7 +83,7 @@ class Category
         $this->categoryHelper = $categoryHelper;
         $this->categoryRepository = $categoryRepository;
         $this->categoryResource = $categoryResource;
-        $this->data = $data;
+        $this->configuration = $configuration;
         $this->oData = $oData;
         $this->client = $client;
         $this->logger = $logger;
@@ -78,7 +97,7 @@ class Category
         $seenRemoteCategories = [];
         $seenLocalCategories = [];
 
-        $store = $this->data->getStore();
+        $store = $this->configuration->getStore();
         $magentoCategory = $this->categoryRepository->get($store->getRootCategoryId(), $store->getId());
 
         $this->syncCategory($magentoCategory, null, $seenRemoteCategories, $seenLocalCategories);

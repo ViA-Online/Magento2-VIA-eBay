@@ -48,8 +48,13 @@ class Uninstall implements UninstallInterface
     {
         $setup->startSetup();
 
-        $setup->getConnection()->dropTable($setup->getTable('viaebay_backlog_product'));
+        $setup->getConnection()->dropTable($setup->getTable('viaebay_category'));
+        $setup->getConnection()->dropTable($setup->getTable('viaebay_product'));
+        $setup->getConnection()->dropTable($setup->getTable('viaebay_product_variation'));
+        $setup->getConnection()->dropTable($setup->getTable('viaebay_customer'));
         $setup->getConnection()->dropTable($setup->getTable('viaebay_order'));
+        $setup->getConnection()->dropTable($setup->getTable('viaebay_attribute'));
+        $setup->getConnection()->dropTable($setup->getTable('viaebay_backlog_product'));
 
         $setup->endSetup();
 
@@ -68,10 +73,12 @@ class Uninstall implements UninstallInterface
 
         $eavSetup->removeAttribute(Product::ENTITY, 'viaebay_auto_decline_price');
 
+        $eavSetup->removeAttribute(Product::ENTITY, 'viaebay_variant_ids');
+
         $eavSetup->removeAttribute(Order::ENTITY, 'viaebay_id');
 
-        $eavSetup->removeAttribute(Customer::ENTITY, 'viaebay_buyer_id');
+        $eavSetup->removeAttribute(Customer::ENTITY, 'viaebay_id');
 
-        $eavSetup->removeAttribute(Customer::ENTITY, 'viaebay_buyer_name');
+        $eavSetup->removeAttribute(Customer::ENTITY, 'viaebay_name');
     }
 }

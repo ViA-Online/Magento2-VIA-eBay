@@ -65,6 +65,12 @@ class InstallData implements InstallDataInterface
      * Init
      *
      * @param EavSetupFactory $eavSetupFactory
+     * @param CategorySetupFactory $categorySetupFactory
+     * @param VIAeBayAttributeResource $viaAttributeResource
+     * @param VIAeBayAttributeRepository $viaAttributeRepository
+     * @param VIAeBayAttributeFactory $viaAttributeFactory
+     * @param AttributeRepository $attributeRepository
+     * @param TypeListInterface $cacheTypeList
      */
     public function __construct(
         EavSetupFactory $eavSetupFactory,

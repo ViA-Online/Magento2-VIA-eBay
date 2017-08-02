@@ -2,7 +2,7 @@
     "name": "viaebay/magento2-connector",
     "description": "VIA-eBay - Magento 2 Connector",
     "type": "magento2-module",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "keywords": ["ebay", "magento2"],
     "license": [
         "OSL-3.0",
@@ -13,16 +13,18 @@
         "php-http/message": "^1.6",
         "php-http/guzzle6-adapter": "^1.1",
         "php-http/multipart-stream-builder": "^1.0.0",
-        "acquia/http-hmac-php": "~3.1.2",
         "ramsey/uuid": "^3.6",
         "magento/framework": "*",
         "magento/module-backend": "*",
+        "magento/module-bundle": "*",
         "magento/module-catalog": "*",
         "magento/module-catalog-inventory": "*",
         "magento/module-config": "*",
+        "magento/module-configurable-product": "*",
         "magento/module-cron": "*",
         "magento/module-customer": "*",
         "magento/module-eav": "*",
+        "magento/module-grouped-product": "*",
         "magento/module-payment": "*",
         "magento/module-quote": "*",
         "magento/module-require-js": "*",
@@ -31,11 +33,6 @@
         "magento/module-shipping": "*",
         "magento/module-store": "*",
         "magento/module-tax": "*"
-    },
-    "suggest": {
-        "magento/module-bundle": "Allows using bundle products in listings and orders",
-        "magento/module-configurable-product": "Allows using configurable products in listings and orders",
-        "magento/module-grouped-product": "Allows using grouped products in listings and orders"
     },
     "autoload": {
         "files": [ "registration.php" ],

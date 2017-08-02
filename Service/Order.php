@@ -189,10 +189,10 @@ class Order
      * @param OrderItemFactory $orderItemFactory
      * @param OrderAddressFactory $orderAddressFactory
      * @param CustomerAddressFactory $customerAddressFactory
-     * @param ProductRepositoryInterface|ProductRepository $productRepository
+     * @param ProductRepositoryInterface $productRepository
      * @param StockRegistryInterface $stockRegistry
      * @param StockItemRepositoryInterface $stockItemRepository
-     * @param CartRepositoryInterface|QuoteRepository $quoteRepository
+     * @param CartRepositoryInterface $quoteRepository
      * @param QuoteFactory $quoteFactory
      * @param CustomerFactory $customerFactory ,
      * @param CustomerRepositoryInterface $customerRepository
@@ -410,6 +410,9 @@ class Order
             $firstName = $viaOrder['Address']['Name'];
             $lastName = $viaOrder['Address']['Surname'];
             $email = $viaOrder['Address']['Email'];
+            $price = $viaOrder['TotalPrice'];
+            $shippingCost = $viaOrder['ShippingServiceCost'];
+
             $checkoutCompleteDate = $this->oData->parseDate('CheckoutCompletionDate', $viaOrder);
 
             $store = $this->viaConfigurationHelper->getStore();
@@ -436,9 +439,15 @@ class Order
             $totalQty = 0;
             $totalWeight = 0;
 
+            $taxAmount = 0;
+            $weightedTaxAmount = 0;
+
             //add items in quote
             foreach ($viaOrder ['SalesOrderItems'] as $viaItem) {
                 $item = $this->buildOrderItem($viaItem);
+
+                $taxAmount += $item->getTaxAmount();
+                $weightedTaxAmount += $item->getTaxAmount() * $item->getTaxPercent();
 
                 if ($item->getProductId()) {
                     $this->updateMagentoStock($item->getProductId(), $item->getQtyOrdered());
@@ -449,6 +458,10 @@ class Order
 
                 $order->addItem($item);
             }
+
+            $effectiveShippingTaxPercent = $weightedTaxAmount / $taxAmount;
+            $effectiveShippingWithoutTax = $shippingCost / (1 + ($effectiveShippingTaxPercent / 100.0));
+            $shippingTaxAmount = $shippingCost - $effectiveShippingWithoutTax;
 
             //Set Address to quote
             $viaAddress = $this->convertAddress($viaOrder ['Address'], $email);
@@ -475,9 +488,6 @@ class Order
             $payment = $this->orderPaymentRepository->create();
             $payment->setMethod('checkmo');
 
-            $price = $viaOrder['TotalPrice'];
-            $shippingCost = $viaOrder['ShippingServiceCost'];
-
             $order->setShippingMethod('freeshipping_freeshipping');
             $order->setShippingDescription('VIA-eBay Shipping');
             $order->setPayment($payment);
@@ -490,17 +500,17 @@ class Order
             $order->setBaseShippingTaxAmount(0);
             $order->setBaseSubtotal($price);
             $order->setBaseSubtotalInclTax($price);
-            $order->setBaseTaxAmount(0);
+            $order->setBaseTaxAmount($taxAmount);
             $order->setBaseToGlobalRate(1);
             $order->setBaseToOrderRate(1);
             $order->setDiscountAmount(0);
             $order->setGrandTotal($price + $shippingCost);
             $order->setShippingAmount($shippingCost);
-            $order->setShippingTaxAmount($shippingCost);
+            $order->setShippingTaxAmount($shippingTaxAmount);
             $order->setStoreToBaseRate(0);
             $order->setStoreToOrderRate(0);
             $order->setSubtotal($price);
-            $order->setTaxAmount(0);
+            $order->setTaxAmount($taxAmount);
             $order->setTotalQtyOrdered($totalQty);
             $order->setBaseShippingDiscountAmount(0);
             $order->setBaseTotalDue($price);
@@ -857,6 +867,7 @@ class Order
         $productId = $this->resolveProductId($viaItem);
         $sku = $this->resolveSku($viaItem);
 
+        /* @var $product \Magento\Catalog\Model\Product */
         $product = null;
         try {
             if ($productId > 0) {
@@ -898,7 +909,7 @@ class Order
         }
 
         if ($taxPercent > 0) {
-            $taxFactor = 1 + $taxPercent / 100;
+            $taxFactor = 1 + $taxPercent / 100.0;
             $priceWithoutTax = $priceWithTax / $taxFactor;
             $rowTotalWithoutTax = $rowTotalWithTax / $taxFactor;
         } else {

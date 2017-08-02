@@ -45,7 +45,6 @@
                     <item name="entityContext" xsi:type="array">
                         <item name="store" xsi:type="string">Magento\Store\Model\StoreScopeProvider</item>
                     </item>
-
                 </item>
             </argument>
         </arguments>

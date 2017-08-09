@@ -330,7 +330,9 @@ class Product
     public function exportProductById(int $productId)
     {
         $product = $this->loadProductById($productId);
-        $this->exportProduct($product);
+        if ($product) {
+            $this->exportProduct($product);
+        }
         return $product;
     }
 
@@ -625,10 +627,12 @@ class Product
 
                 $simpleProduct = $this->loadProductById($viaProductVariation ['ForeignId']);
 
-                try {
-                    $this->viaProductVariationRepository->deleteByProductIds($product->getId(), $simpleProduct->getId());
-                } catch (NoSuchEntityException $e) {
-
+                if ($simpleProduct) {
+                    try {
+                        $this->viaProductVariationRepository->deleteByProductIds($product->getId(), $simpleProduct->getId());
+                    } catch (NoSuchEntityException $e) {
+                        $this->logger->addDebug('Could not delete product');
+                    }
                 }
             } catch (\Exception $e) {
                 $this->logger->addError($e->getMessage());
@@ -882,6 +886,10 @@ class Product
             }
 
             $simpleProduct = $this->loadProductById($simpleProduct->getId());
+            if (!$simpleProduct) {
+                $this->logger->addDebug('Could not load product', ['id' => $simpleProduct->getId()]);
+                continue;
+            }
 
             $mappedValues = $this->viaProductHelper->getMappedAttributeValues($simpleProduct, $product);
 
@@ -1312,7 +1320,9 @@ class Product
     public function updateStockById($productId, $qtyStock = null)
     {
         $product = $this->loadProductById($productId);
-        $this->updateStock($product, $qtyStock);
+        if ($product) {
+            $this->updateStock($product, $qtyStock);
+        }
     }
 
     /**
@@ -1433,7 +1443,8 @@ class Product
         $productId = $args ['row'] ['entity_id'];
         $product = $this->loadProductById($productId);
 
-        if ($product->getTypeId() != Type::TYPE_SIMPLE) {
+        if (!$product || $product->getTypeId() != Type::TYPE_SIMPLE) {
+            $this->logger->addDebug('Could not load product', ['id' => $productId]);
             return;
         }
 
@@ -1486,7 +1497,7 @@ class Product
         $product = $this->loadProductById($productId);
 
         // Simple products get all variant ids assigned they belong to
-        if ($product->getTypeId() != Type::TYPE_SIMPLE) {
+        if (!$product || $product->getTypeId() != Type::TYPE_SIMPLE) {
             return;
         }
 
@@ -1503,6 +1514,10 @@ class Product
         foreach ($productVariantExtensions as $productVariantExtension) {
             /* @var $productVariantExtension \VIAeBay\Connector\Api\Data\ProductVariationInterface */
             $productVariant = $this->loadProductById($productVariantExtension->getProductId());
+
+            if (!$productVariant) {
+                continue;
+            }
 
             $mappedAttributes = $this->viaProductHelper->getMappedAttributeValues($productVariant, $product);
 

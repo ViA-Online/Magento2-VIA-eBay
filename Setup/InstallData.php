@@ -8,19 +8,13 @@ namespace VIAeBay\Connector\Setup;
 
 use Magento\Catalog\Model\Category;
 use Magento\Catalog\Model\Product;
-use Magento\Catalog\Setup\CategorySetupFactory;
 use Magento\Customer\Model\Customer;
-use Magento\Eav\Model\AttributeRepository;
 use Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface;
 use Magento\Eav\Setup\EavSetup;
 use Magento\Eav\Setup\EavSetupFactory;
-use Magento\Framework\App\Cache\TypeListInterface;
 use Magento\Framework\Setup\InstallDataInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
-use VIAeBay\Connector\Model\AttributeFactory as VIAeBayAttributeFactory;
-use VIAeBay\Connector\Model\AttributeRepository as VIAeBayAttributeRepository;
-use VIAeBay\Connector\Model\ResourceModel\Attribute as VIAeBayAttributeResource;
 
 class InstallData implements InstallDataInterface
 {
@@ -32,62 +26,14 @@ class InstallData implements InstallDataInterface
     private $eavSetupFactory;
 
     /**
-     * EAV setup factory.
-     *
-     * @var $eavSetupFactory
-     */
-    private $categorySetupFactory;
-
-    /**
-     * @var VIAeBayAttributeResource
-     */
-    private $viaAttributeResource;
-    /**
-     * @var VIAeBayAttributeRepository
-     */
-    private $viaAttributeRepository;
-    /**
-     * @var AttributeRepository
-     */
-    private $attributeRepository;
-
-    /**
-     * @var VIAeBayAttributeFactory
-     */
-    private $viaAttributeFactory;
-
-    /**
-     * @var TypeListInterface
-     */
-    private $cacheTypeList;
-
-    /**
      * Init
      *
      * @param EavSetupFactory $eavSetupFactory
-     * @param CategorySetupFactory $categorySetupFactory
-     * @param VIAeBayAttributeResource $viaAttributeResource
-     * @param VIAeBayAttributeRepository $viaAttributeRepository
-     * @param VIAeBayAttributeFactory $viaAttributeFactory
-     * @param AttributeRepository $attributeRepository
-     * @param TypeListInterface $cacheTypeList
      */
     public function __construct(
-        EavSetupFactory $eavSetupFactory,
-        CategorySetupFactory $categorySetupFactory,
-        VIAeBayAttributeResource $viaAttributeResource,
-        VIAeBayAttributeRepository $viaAttributeRepository,
-        VIAeBayAttributeFactory $viaAttributeFactory,
-        AttributeRepository $attributeRepository,
-        TypeListInterface $cacheTypeList)
+        EavSetupFactory $eavSetupFactory)
     {
         $this->eavSetupFactory = $eavSetupFactory;
-        $this->categorySetupFactory = $categorySetupFactory;
-        $this->viaAttributeRepository = $viaAttributeRepository;
-        $this->attributeRepository = $attributeRepository;
-        $this->viaAttributeResource = $viaAttributeResource;
-        $this->viaAttributeFactory = $viaAttributeFactory;
-        $this->cacheTypeList = $cacheTypeList;
     }
 
     /**
@@ -99,10 +45,10 @@ class InstallData implements InstallDataInterface
      */
     public function install(ModuleDataSetupInterface $setup, ModuleContextInterface $context)
     {
-        /** @var EavSetup $eavSetup */
-        $eavSetup = $this->eavSetupFactory->create();
-
         $setup->startSetup();
+
+        /** @var EavSetup $eavSetup */
+        $eavSetup = $this->eavSetupFactory->create(['setup' => $setup]);
 
         $eavSetup->addAttribute(
             Category::ENTITY,
@@ -290,26 +236,6 @@ class InstallData implements InstallDataInterface
         );
 
         $eavSetup->cleanCache();
-
-        $mapping = [
-            'name' => 'Title',
-            'price' => 'Price',
-            'description' => 'Description',
-            'short_description' => 'ShortDescription'
-        ];
-
-        foreach ($mapping as $key => $value) {
-            $current = $this->viaAttributeResource->loadByAttributeCode($key);
-            if (!is_array($current) || !empty($current)) {
-                $magentoAttribute = $this->attributeRepository->get(Product::ENTITY, $key);
-                $viaAttribute = $this->viaAttributeFactory->create();
-                $viaAttribute->setData('attribute_id', $magentoAttribute->getAttributeId());
-                $viaAttribute->setData('type', $value);
-                $viaAttribute->getResource()->save($viaAttribute);
-            } else {
-                // Already existing
-            }
-        }
 
         $setup->endSetup();
     }

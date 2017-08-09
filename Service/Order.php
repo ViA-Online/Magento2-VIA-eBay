@@ -635,7 +635,8 @@ class Order
         try {
             $invoice->setSendEmail(true);
         } catch (\Exception $e) {
-            $this->logger->addError((string)$e);
+            $this->logger->addError($e->getMessage());
+            $this->logger->addDebug($e->__toString());
         }
 
         $this->eventManager->dispatch('viaebay_order_invoice_new', [
@@ -692,7 +693,7 @@ class Order
                                     $this->client->send($this->oData->updateObject($salesOrderItem, $delta));
                                 } catch (\Exception $e) {
                                     $this->logger->addError(__('Failed setting TrackingNumbers'), ['viaOrderId' => $viaOrder ['Id'], 'trackingNumbers' => $trackingNumbers]);
-                                    $this->logger->addError($e->__toString());
+                                    $this->logger->addDebug($e->__toString());
                                 }
                             }
                         }
@@ -735,7 +736,7 @@ class Order
                             $this->logger->addInfo(__('VIA-eBay shipping status has been set'), ['via_ebay_order_item' => $salesOrderItem ['Id']]);
                         } catch (\Exception $e) {
                             $this->logger->addError(__('VIA-eBay shipping status has not been set'), ['via_ebay_order_item' => $salesOrderItem ['Id']]);
-                            $this->logger->addError($e->__toString());
+                            $this->logger->addDebug($e->__toString());
                         }
                     }
                 }
@@ -760,7 +761,7 @@ class Order
             }
         } catch (\Exception $e) {
             $this->logger->addError(__('VIA-eBay payment status has not been set'), ['orderId' => $invoice->getOrderId(), 'amount' => $amount]);
-            $this->logger->addError($e->__toString());
+            $this->logger->addDebug($e->__toString());
         }
     }
 

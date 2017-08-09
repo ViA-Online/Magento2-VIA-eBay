@@ -17,8 +17,8 @@
         <carriers>
             <viaebayshipping>
                 <active>1</active>
-                <allowed_methods>m2eproshipping</allowed_methods>
-                <methods>m2eproshipping</methods>
+                <allowed_methods>viaebayshipping</allowed_methods>
+                <methods>viaebayshipping</methods>
                 <sallowspecific>0</sallowspecific>
                 <model>VIAeBay\Connector\Model\Carrier\VIAeBayCarrier</model>
                 <name>VIA-eBay Shipping</name>

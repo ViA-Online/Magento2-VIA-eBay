@@ -209,17 +209,7 @@ class Client
             $this->login();
         }
 
-        try {
-            $response = $this->client->sendAsync($extendedRequest)->otherwise(
-                function (TransferException $exception) {
-                    $this->logger->error((string)$exception);
-                }
-            )->wait(true);
-        } catch (\Exception $e) {
-            $this->logger->addError($e->getMessage());
-            $this->logger->addDebug($e->__toString());
-            throw $e;
-        }
+        $response = $this->client->sendAsync($extendedRequest, ['http_errors' => false])->wait(true);
 
         return $response;
     }

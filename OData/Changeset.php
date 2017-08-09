@@ -168,7 +168,7 @@ class Changeset extends AbstractRequest
 
     /**
      * @param Uri|null $uriPrefix
-     * @return Uri method used
+     * @return \Psr\Http\Message\UriInterface method used
      */
     function getUri(Uri $uriPrefix = null)
     {

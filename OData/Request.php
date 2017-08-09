@@ -232,6 +232,8 @@ class Request extends AbstractRequest
 
         $decodedResponse = json_decode($realBody, true);
 
+        $this->checkResponse($decodedResponse);
+
         $normalizedResponse = null;
         if (is_array($decodedResponse) && array_key_exists('d', $decodedResponse)) {
             $normalizedResponse = $decodedResponse['d'];

@@ -459,8 +459,17 @@ class Order
                 $order->addItem($item);
             }
 
-            $effectiveShippingTaxPercent = $weightedTaxAmount / $taxAmount;
-            $effectiveShippingWithoutTax = $shippingCost / (1 + ($effectiveShippingTaxPercent / 100.0));
+            if ($taxAmount > 0) {
+                $effectiveShippingTaxPercent = $weightedTaxAmount / $taxAmount;
+            } else {
+                $effectiveShippingTaxPercent = 0;
+            }
+
+            if ($effectiveShippingTaxPercent > 0) {
+                $effectiveShippingWithoutTax = $shippingCost / (1 + ($effectiveShippingTaxPercent / 100.0));
+            } else {
+                $effectiveShippingWithoutTax = $shippingCost;
+            }
             $shippingTaxAmount = $shippingCost - $effectiveShippingWithoutTax;
 
             //Set Address to quote

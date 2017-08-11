@@ -348,8 +348,7 @@ class Product
         $viaEbayStoreId = $this->data->getStoreId();
 
         if ($viaEbayStoreId <= 0) {
-            $this->logger->addCritical("StoreId not set");
-            return null;
+            throw new LocalizedException(__('StoreId is not set'));
         }
 
         $product = $this->productRepository->getById($productId, false, $viaEbayStoreId);

@@ -8,6 +8,7 @@ namespace VIAeBay\Connector\Plugin\Catalog\Controller\Adminhtml\Product\Action\A
 use Magento\Catalog\Controller\Adminhtml\Product\Action\Attribute\Save;
 use Magento\Catalog\Helper\Product\Edit\Action\Attribute;
 use Magento\Framework\App\Request\Http;
+use VIAeBay\Connector\Helper\Configuration;
 use VIAeBay\Connector\Logger\Logger;
 use VIAeBay\Connector\Service\Backlog;
 
@@ -29,6 +30,11 @@ class Plugin
     private $attributeHelper;
 
     /**
+     * @var Configuration
+     */
+    private $configurationHelper;
+
+    /**
      * @var Http
      */
     private $request;
@@ -38,16 +44,21 @@ class Plugin
      */
     private $logger;
 
-    function __construct(Http $request, Backlog $backlog, Attribute $attributeHelper, Logger $logger)
+    function __construct(Http $request, Backlog $backlog, Attribute $attributeHelper, Configuration $configuration, Logger $logger)
     {
         $this->request = $request;
         $this->backlog = $backlog;
         $this->attributeHelper = $attributeHelper;
+        $this->configurationHelper = $configuration;
         $this->logger = $logger;
     }
 
     public function afterExecute(Save $subject, $result)
     {
+        if (!$this->configurationHelper->isActive()) {
+            return $result;
+        }
+
         try {
             $productIds = $this->attributeHelper->getProductIds();
             $attributesData = $this->request->getParam('attributes', []);

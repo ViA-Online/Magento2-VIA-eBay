@@ -8,6 +8,7 @@ namespace VIAeBay\Connector\Plugin\Sales\Model\ResourceModel\Order\Shipment;
 use Magento\Framework\Model\AbstractModel;
 use Magento\Sales\Model\Order\Shipment;
 use Magento\Sales\Model\ResourceModel\Order\Shipment as ShipmentResource;
+use VIAeBay\Connector\Helper\Configuration;
 use VIAeBay\Connector\Logger\Logger;
 use VIAeBay\Connector\Service\Order;
 
@@ -24,13 +25,19 @@ class Plugin
     private $orderService;
 
     /**
+     * @var Configuration
+     */
+    private $configurationHelper;
+
+    /**
      * @var Logger
      */
     private $logger;
 
-    function __construct(Order $orderService, Logger $logger)
+    function __construct(Order $orderService, Configuration $configuration, Logger $logger)
     {
         $this->orderService = $orderService;
+        $this->configurationHelper = $configuration;
         $this->logger = $logger;
     }
 
@@ -42,7 +49,7 @@ class Plugin
         $result = $proceed($interceptedInput);
 
         try {
-            if ($isNew && $interceptedInput instanceof Shipment) {
+            if ($this->configurationHelper->isActive() && $isNew && $interceptedInput instanceof Shipment) {
                 $this->orderService->updateShipmentStatus($interceptedInput);
             }
         }catch (\Exception $exception) {

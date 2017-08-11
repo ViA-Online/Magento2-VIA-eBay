@@ -209,7 +209,7 @@ class Request extends AbstractRequest
 
         // Add start and headers
         $header = "Content-Type: application/http\r\n";
-        $header.= "Content-Transfer-Encoding: binary\r\n";
+        $header .= "Content-Transfer-Encoding: binary\r\n";
 
         if ($contentLength > 0) {
             //$header.="Content-Length: $contentLength\r\n";
@@ -231,19 +231,11 @@ class Request extends AbstractRequest
         }
 
         $decodedResponse = json_decode($realBody, true);
-
-        $this->checkResponse($decodedResponse);
-
         $normalizedResponse = null;
-        if (is_array($decodedResponse) && array_key_exists('d', $decodedResponse)) {
-            $normalizedResponse = $decodedResponse['d'];
-            if ($realHeader != null && array_key_exists('DataServiceVersion', $realHeader)
-                && strpos($realHeader ['DataServiceVersion'][0], '2.0') === 0
-                && is_array($normalizedResponse)
-                && array_key_exists('results', $normalizedResponse)) {
-                // Ignore collection metadata for now
-                $normalizedResponse = $normalizedResponse['results'];
-            }
+
+        if ($decodedResponse != null && is_array($decodedResponse)) {
+            $this->checkResponse($decodedResponse);
+            $normalizedResponse = $this->normalizeResponse($decodedResponse, $realHeader);
         }
 
         if ($this->promise != null) {

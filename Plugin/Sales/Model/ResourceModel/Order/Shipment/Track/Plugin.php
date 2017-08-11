@@ -8,6 +8,7 @@ namespace VIAeBay\Connector\Plugin\Sales\Model\ResourceModel\Order\Shipment\Trac
 use Magento\Framework\Model\AbstractModel;
 use Magento\Sales\Model\Order\Shipment\Track;
 use Magento\Sales\Model\ResourceModel\Order\Shipment\Track as TrackResource;
+use VIAeBay\Connector\Helper\Configuration;
 use VIAeBay\Connector\Logger\Logger;
 use VIAeBay\Connector\Service\Order;
 
@@ -26,13 +27,19 @@ class Plugin
     private $orderService;
 
     /**
+     * @var Configuration
+     */
+    private $configurationHelper;
+
+    /**
      * @var Logger
      */
     private $logger;
 
-    function __construct(Order $orderService, Logger $logger)
+    function __construct(Order $orderService, Configuration $configuration, Logger $logger)
     {
         $this->orderService = $orderService;
+        $this->configurationHelper = $configuration;
         $this->logger = $logger;
     }
 
@@ -44,7 +51,7 @@ class Plugin
         $result = $proceed($interceptedInput);
 
         try {
-            if ($isNew && $interceptedInput instanceof Track) {
+            if ($this->configurationHelper->isActive() && $isNew && $interceptedInput instanceof Track) {
                 $this->orderService->addTrackingNumber($interceptedInput);
             }
         } catch (\Exception $exception) {

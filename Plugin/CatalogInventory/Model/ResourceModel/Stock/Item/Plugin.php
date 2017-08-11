@@ -7,6 +7,7 @@ namespace VIAeBay\Connector\Plugin\CatalogInventory\Model\ResourceModel\Stock\It
 
 use Magento\CatalogInventory\Api\Data\StockItemInterface;
 use Magento\CatalogInventory\Model\ResourceModel\Stock\Item as StockItemResource;
+use VIAeBay\Connector\Helper\Configuration;
 use VIAeBay\Connector\Logger\Logger;
 use VIAeBay\Connector\Service\Product;
 
@@ -24,13 +25,19 @@ class Plugin
     private $productService;
 
     /**
+     * @var Configuration
+     */
+    private $configurationHelper;
+
+    /**
      * @var Logger
      */
     private $logger;
 
-    function __construct(Product $product, Logger $logger)
+    function __construct(Product $product, Configuration $configuration, Logger $logger)
     {
         $this->productService = $product;
+        $this->configurationHelper = $configuration;
         $this->logger = $logger;
     }
 
@@ -40,7 +47,7 @@ class Plugin
         $result = $proceed($interceptedInput);
 
         try {
-            if ($interceptedInput instanceof StockItemInterface) {
+            if ($this->configurationHelper->isActive() && $interceptedInput instanceof StockItemInterface) {
                 $this->productService->updateStockById($interceptedInput->getProductId(), $interceptedInput->getQty());
             }
         } catch (\Exception $exception) {

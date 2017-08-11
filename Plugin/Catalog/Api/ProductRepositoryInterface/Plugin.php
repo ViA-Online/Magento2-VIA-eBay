@@ -5,29 +5,48 @@
 
 namespace VIAeBay\Connector\Plugin\Catalog\Api\ProductRepositoryInterface;
 
-use Magento\Catalog\Api\Data\ProductExtensionFactory;
+use Magento\Catalog\Api\Data\ProductExtensionFactory\Proxy as ProductExtensionFactory;
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\Data\ProductSearchResultsInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 use VIAeBay\Connector\Api\ProductRepositoryInterface as VIAeBayProductRepositoryInterface;
+use VIAeBay\Connector\Helper\Configuration;
 use VIAeBay\Connector\Model\ProductFactory as VIAProductFactory;
 
 class Plugin
 {
+    /**
+     * @var ProductExtensionFactory
+     */
     protected $productExtensionFactory;
+
+    /**
+     * @var VIAProductFactory
+     */
     protected $viaProductFactory;
+
+    /**
+     * @var VIAeBayProductRepositoryInterface
+     */
     protected $viaProductRepository;
+
+    /**
+     * @var Configuration
+     */
+    protected $configurationHelper;
 
     public function __construct(
         ProductExtensionFactory $productExtensionFactory,
         VIAProductFactory $productFactory,
-        VIAeBayProductRepositoryInterface $viaProductRepository
+        VIAeBayProductRepositoryInterface $viaProductRepository,
+        Configuration $configuration
     )
     {
         $this->viaProductFactory = $productFactory;
         $this->productExtensionFactory = $productExtensionFactory;
         $this->viaProductRepository = $viaProductRepository;
+        $this->configurationHelper = $configuration;
     }
 
     public function afterGet
@@ -36,7 +55,9 @@ class Plugin
         ProductInterface $entity
     )
     {
-        $this->addVIAAttributesToProduct($entity);
+        if ($this->configurationHelper->isActive()) {
+            $this->addVIAAttributesToProduct($entity);
+        }
 
         return $entity;
     }
@@ -47,7 +68,9 @@ class Plugin
         ProductInterface $entity
     )
     {
-        $this->addVIAAttributesToProduct($entity);
+        if ($this->configurationHelper->isActive()) {
+            $this->addVIAAttributesToProduct($entity);
+        }
 
         return $entity;
     }
@@ -60,7 +83,7 @@ class Plugin
     {
         $extensionAttributes = $entity->getExtensionAttributes();
 
-        if ($extensionAttributes) {
+        if ($this->configurationHelper->isActive() && $extensionAttributes) {
             $viaProduct = $extensionAttributes->getVIAeBayConnector();
             $viaProduct->setProductId($entity->getId());
             $this->viaProductRepository->save($viaProduct);
@@ -74,8 +97,10 @@ class Plugin
         ProductSearchResultsInterface $entity
     )
     {
-        foreach ($entity as $item) {
-            $this->addVIAAttributesToProduct($item);
+        if ($this->configurationHelper->isActive()) {
+            foreach ($entity as $item) {
+                $this->addVIAAttributesToProduct($item);
+            }
         }
     }
 

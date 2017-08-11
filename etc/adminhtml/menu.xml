@@ -11,12 +11,16 @@
              module="VIAeBay_Connector" sortOrder="10" parent="VIAeBay_Connector::connector"
              action="viaebay_connector/backlog_product/index" resource="VIAeBay_Connector::backlog"/>
 
-        <add id="VIAeBay_Connector::viaebay_connector/attribute/index_menu" title="Attribute"
-             module="VIAeBay_Connector" sortOrder="100" parent="VIAeBay_Connector::connector"
-             action="viaebay_connector/attribute/index" resource="VIAeBay_Connector::attribute"/>
-
         <add id="VIAeBay_Connector::viaebay_connector/order/index_menu" title="Orders"
              module="VIAeBay_Connector" sortOrder="50" parent="VIAeBay_Connector::connector"
              action="viaebay_connector/order/index" resource="VIAeBay_Connector::order"/>
+
+        <add id="VIAeBay_Connector::viaebay_connector/attribute/index_menu" title="Attribute"
+             module="VIAeBay_Connector" sortOrder="500" parent="VIAeBay_Connector::connector"
+             action="viaebay_connector/attribute/index" resource="VIAeBay_Connector::attribute"/>
+
+        <add id="VIAeBay_Connector::viaebay_connector/configuration/index_menu" title="Configuration"
+             module="VIAeBay_Connector" sortOrder="1000" parent="VIAeBay_Connector::connector"
+             action="adminhtml/system_config/edit/section/viaebay_connector" resource="VIAeBay_Connector::config"/>
     </menu>
 </config>

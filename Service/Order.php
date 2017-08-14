@@ -8,7 +8,6 @@ namespace VIAeBay\Connector\Service;
 use GuzzleHttp\Psr7\Uri;
 use Magento\Catalog\Api\ProductRepositoryInterface\Proxy as ProductRepositoryInterface;
 use Magento\Catalog\Model\Product\Type;
-use Magento\Catalog\Model\ProductRepository\Proxy as ProductRepository;
 use Magento\CatalogInventory\Api\StockItemRepositoryInterface\Proxy as StockItemRepositoryInterface;
 use Magento\CatalogInventory\Api\StockRegistryInterface\Proxy as StockRegistryInterface;
 use Magento\Customer\Api\CustomerRepositoryInterface\Proxy as CustomerRepositoryInterface;
@@ -16,7 +15,10 @@ use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Customer\Model\AddressFactory as CustomerAddressFactory;
 use Magento\Customer\Model\Customer;
 use Magento\Customer\Model\CustomerFactory;
+use Magento\Customer\Model\CustomerRegistry;
 use Magento\Framework\App\ResourceConnection;
+use Magento\Framework\DataObject;
+use Magento\Framework\DataObjectFactory\Proxy as DataObjectFactory;
 use Magento\Framework\Event\ManagerInterface\Proxy as ManagerInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
@@ -36,7 +38,7 @@ use Magento\Sales\Model\Order\Payment\Repository\Proxy as OrderPaymentRepository
 use Magento\Sales\Model\Order\Shipment;
 use Magento\Sales\Model\Order\Shipment\Track;
 use Magento\Sales\Model\OrderFactory;
-use Magento\Tax\Api\TaxCalculationInterface\Proxy as TaxCalculationInterfaceProxy;
+use Magento\Tax\Model\Calculation\Proxy as TaxCalculation;
 use VIAeBay\Connector\Exception\Product as ProductException;
 use VIAeBay\Connector\Exception\Products as ProductsException;
 use VIAeBay\Connector\Helper\Configuration;
@@ -86,6 +88,11 @@ class Order
      * @var CustomerRepositoryInterface
      */
     private $customerRepository;
+
+    /**
+     * @var CustomerRegistry
+     */
+    private $customerRegistry;
 
     /**
      * @var Configuration
@@ -182,6 +189,12 @@ class Order
     private $taxCalculation;
 
     /**
+     * @var DataObjectFactory
+     */
+    private $dataObjectFactory;
+
+
+    /**
      * @param ResourceConnection $resourceConnection
      * @param OrderManagementInterface $orderManagement
      * @param OrderRepositoryInterface $orderRepository
@@ -227,8 +240,10 @@ class Order
                                 Rate $shippingRate,
                                 CookieManagerInterface $cookieManager,
                                 ManagerInterface $eventManager,
-                                TaxCalculationInterfaceProxy $taxCalculation,
+                                TaxCalculation $taxCalculation,
                                 OrderPaymentRepository $paymentRepository,
+                                DataObjectFactory $dataObjectFactory,
+                                CustomerRegistry $customerRegistry,
                                 VIAOrderRepository $viaOrderRepository,
                                 VIAOrderFactory $viaOrderFactory,
                                 OData $oData,
@@ -256,6 +271,8 @@ class Order
         $this->currencyFactory = $currencyFactory;
         $this->rate = $shippingRate;
         $this->taxCalculation = $taxCalculation;
+        $this->dataObjectFactory = $dataObjectFactory;
+        $this->customerRegistry = $customerRegistry;
         $this->logger = $logger;
         $this->client = $client;
         $this->oData = $oData;
@@ -442,9 +459,40 @@ class Order
             $taxAmount = 0;
             $weightedTaxAmount = 0;
 
+            //Set Address to quote
+            $viaAddress = $this->convertAddress($viaOrder ['Address'], $email);
+            if (isset ($viaOrder ['ShippingAddress'] ['Id'])) {
+                $viaShippingAddress = $this->convertAddress($viaOrder ['ShippingAddress'], $email);
+            } else {
+                $viaShippingAddress = $viaAddress;
+            }
+
+            $billingAddressData = $this->dataObjectFactory->create();
+            $billingAddressData->setData($viaOrder);
+
+            $billingAddress = $this->orderAddressFactory->create();
+            $billingAddress->setData($viaAddress);
+            $billingAddress->setCustomerId($customer->getId());
+            $billingAddress->setAddressType(Address::TYPE_BILLING);
+            $order->setBillingAddress($billingAddress);
+            $order->getBillingAddress()->setEmail($email);
+
+            $shippingAddressData = $this->dataObjectFactory->create();
+            $shippingAddressData->setData($viaAddress);
+
+            $shippingAddress = $this->orderAddressFactory->create();
+            $shippingAddress->setData($viaShippingAddress);
+            $shippingAddress->setCustomerId($customer->getId());
+            $shippingAddress->setAddressType(Address::TYPE_BILLING);
+            $order->setShippingAddress($shippingAddress);
+            $order->getShippingAddress()->setEmail($email);
+
+            $taxRateRequest = $this->taxCalculation->getRateRequest($shippingAddressData, $billingAddressData,
+                $customer->getTaxClassId(), $store, $customer->getId());
+
             //add items in quote
             foreach ($viaOrder ['SalesOrderItems'] as $viaItem) {
-                $item = $this->buildOrderItem($viaItem);
+                $item = $this->buildOrderItem($viaItem, $taxRateRequest);
 
                 $taxAmount += $item->getTaxAmount();
                 $weightedTaxAmount += $item->getTaxAmount() * $item->getTaxPercent();
@@ -467,32 +515,13 @@ class Order
 
             if ($effectiveShippingTaxPercent > 0) {
                 $effectiveShippingWithoutTax = $shippingCost / (1 + ($effectiveShippingTaxPercent / 100.0));
+                $taxAmount += $shippingCost - $effectiveShippingWithoutTax;
             } else {
                 $effectiveShippingWithoutTax = $shippingCost;
             }
-            $shippingTaxAmount = $shippingCost - $effectiveShippingWithoutTax;
 
-            //Set Address to quote
-            $viaAddress = $this->convertAddress($viaOrder ['Address'], $email);
-            if (isset ($viaOrder ['ShippingAddress'] ['Id'])) {
-                $viaShippingAddress = $this->convertAddress($viaOrder ['ShippingAddress'], $email);
-            } else {
-                $viaShippingAddress = $viaAddress;
-            }
-
-            $billingAddress = $this->orderAddressFactory->create();
-            $billingAddress->setData($viaAddress);
-            $billingAddress->setCustomerId($customer->getId());
-            $billingAddress->setAddressType(Address::TYPE_BILLING);
-            $order->setBillingAddress($billingAddress);
-            $order->getBillingAddress()->setEmail($email);
-
-            $shippingAddress = $this->orderAddressFactory->create();
-            $shippingAddress->setData($viaShippingAddress);
-            $shippingAddress->setCustomerId($customer->getId());
-            $shippingAddress->setAddressType(Address::TYPE_BILLING);
-            $order->setShippingAddress($shippingAddress);
-            $order->getShippingAddress()->setEmail($email);
+            $taxAmount = (string) $this->taxCalculation->round($taxAmount);
+            $shippingTaxAmount = $this->taxCalculation->round($shippingCost - $effectiveShippingWithoutTax);
 
             $payment = $this->orderPaymentRepository->create();
             $payment->setMethod('checkmo');
@@ -786,22 +815,27 @@ class Order
         $store = $this->viaConfigurationHelper->getStore();
 
         try {
-            return $this->customerRepository->get($email);// load customer by email address
+            $customer = $this->customerRegistry->retrieveByEmail($email, $store->getWebsiteId());
         } catch (NoSuchEntityException $e) {
-            //If not available then create this customer
             $customer = $this->customerFactory->create();
 
-            $customer->setWebsiteId($store->getWebsiteId())
-                ->setStore($store)
+            //If not available then create this customer
+            $customer->setStore($store)
                 ->setPrefix($prefix)
                 ->setFirstname($firstName)
                 ->setLastname($lastName)
                 ->setEmail($email)
                 ->setPassword(sha1(uniqid()));
+
+            // Initialize group_id and tax_class_id before calling save
+            $customer->getGroupId();
+            $customer->getTaxClassId();
+
             $customer->save();
-            //$this->_customerRepository->save($customer);
-            return $customer;
+            $this->customerRegistry->push($customer);
         }
+
+        return $customer;
     }
 
     /**
@@ -870,7 +904,7 @@ class Order
      * @param $viaItem
      * @return \Magento\Sales\Model\Order\Item
      */
-    protected function buildOrderItem($viaItem)
+    protected function buildOrderItem($viaItem, DataObject $taxRateRequest)
     {
         $store = $this->viaConfigurationHelper->getStore();
 
@@ -909,8 +943,9 @@ class Order
             }
 
             if ($taxAttribute = $product->getCustomAttribute('tax_class_id')) {
-                $productRateId = $taxAttribute->getValue();
-                $taxPercent = $this->taxCalculation->getCalculatedRate($productRateId, null, $store->getStoreId());
+                $productTaxClassID = $taxAttribute->getValue();
+                $taxRateRequest->setProductClassId($productTaxClassID);
+                $taxPercent = $this->taxCalculation->getRate($taxRateRequest);
             }
         } else {
             $weight = 0;
@@ -927,7 +962,7 @@ class Order
             $rowTotalWithoutTax = $rowTotalWithTax;
         }
 
-        $taxAmount = $priceWithTax - $priceWithoutTax;
+        $taxAmount = $this->taxCalculation->round($priceWithTax - $priceWithoutTax);
 
         $item = $this->orderItemFactory->create();
 

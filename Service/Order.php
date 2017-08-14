@@ -797,6 +797,8 @@ class Order
                 $this->client->send($this->oData->updateObjectField('SalesOrders(' . $viaOrderReference->getVIAeBayOrderId() . 'L)', 'PaidAmount', strval($amount)));
                 $this->logger->addInfo(__('VIA-eBay payment status has been set'), ['viaOrderReferenceId' => $viaOrderReference->getId(), 'amount' => $amount]);
             }
+        } catch (NoSuchEntityException $e) {
+            $this->logger->addDebug(__('Non VIA-eBay order skipped'), ['orderId' => $invoice->getOrderId(), 'amount' => $amount]);
         } catch (\Exception $e) {
             $this->logger->addError(__('VIA-eBay payment status has not been set'), ['orderId' => $invoice->getOrderId(), 'amount' => $amount]);
             $this->logger->addDebug($e->__toString());

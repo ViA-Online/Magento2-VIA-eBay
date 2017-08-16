@@ -202,6 +202,12 @@ class Product
     protected $viaProductVariationRepository;
 
     /**
+     * Array of product ids that were updated
+     * @var array
+     */
+    protected $updatedProductStocksProductIds = [];
+
+    /**
      * Category constructor.
      * @param ProductFactory $productFactory
      * @param ProductRepository $productRepository
@@ -1312,15 +1318,18 @@ class Product
      *
      * @param $productId
      * @param null $qtyStock
+     * @param bool $force
      * @return void
      * @internal param int $product
      * @internal param string $qty
      */
-    public function updateStockById($productId, $qtyStock = null)
+    public function updateStockById($productId, $qtyStock = null, bool $force = false)
     {
-        $product = $this->loadProductById($productId);
-        if ($product) {
-            $this->updateStock($product, $qtyStock);
+        if ($force || !array_key_exists($productId, $this->updatedProductStocksProductIds)) {
+            $product = $this->loadProductById($productId);
+            if ($product) {
+                $this->updateStock($product, $qtyStock);
+            }
         }
     }
 
@@ -1329,10 +1338,11 @@ class Product
      *
      * @param ProductInterface $product
      * @param int $qtyStock
+     * @param bool $force
      * @return void
      * @internal param int $qty
      */
-    public function updateStock(ProductInterface $product, int $qtyStock = null)
+    public function updateStock(ProductInterface $product, int $qtyStock = null, bool $force = false)
     {
         if ($qtyStock === null) {
             $qtyStock = $this->viaProductHelper->getQtyStock($product);
@@ -1358,35 +1368,39 @@ class Product
         $productVariantExtensions = $this->viaProductVariationRepository->getList($criteria);
 
         try {
-            if ($viaebayExport && $viaebayId) {
+            if ($force || !array_key_exists($product->getId(), $this->updatedProductStocksProductIds)) {
+                foreach ($productVariantExtensions->getItems() as $productVariantExtension) {
+                    /* @var $productVariantExtension \VIAeBay\Connector\Api\Data\ProductVariationInterface */
+
+                    try {
+                        $productExtension = $this->viaProductRepository->getById($productVariantExtension->getVIAeBayProductId());
+                        if (!$productVariantExtension->getVIAeBayId()) {
+                            continue;
+                        }
+
+                        $params = array(
+                            'productId' => $productExtension->getVIAeBayId() . 'L',
+                            'productVariationId' => $productVariantExtension->getVIAeBayId() . 'L',
+                            'stockAmount' => intval($qtyStock > 0 ? $qtyStock : 0)
+                        );
+
+                        $this->client->send($this->oData->call("ReviseInventoryStatus", $params));
+                        $this->updatedProductStocksProductIds[$product->getId()] = true;
+                    } catch (\Exception $e) {
+                        $this->logger->addError($e->getMessage());
+                        $this->logger->addDebug($e->__toString());
+                    }
+                }
+            }
+
+            if (($force || !array_key_exists($product->getId(), $this->updatedProductStocksProductIds)) && $viaebayExport && $viaebayId) {
                 $params = array(
                     'productId' => $viaebayId . 'L',
                     'stockAmount' => intval($qtyStock > 0 ? $qtyStock : 0)
                 );
 
                 $this->client->send($this->oData->call("ReviseInventoryStatus", $params));
-            }
-
-            foreach ($productVariantExtensions->getItems() as $productVariantExtension) {
-                /* @var $productVariantExtension \VIAeBay\Connector\Api\Data\ProductVariationInterface */
-
-                try {
-                    $productExtension = $this->viaProductRepository->getById($productVariantExtension->getVIAeBayProductId());
-                    if (!$productVariantExtension->getVIAeBayId()) {
-                        continue;
-                    }
-
-                    $params = array(
-                        'productId' => $productExtension->getVIAeBayId() . 'L',
-                        'productVariationId' => $productVariantExtension->getVIAeBayId() . 'L',
-                        'stockAmount' => intval($qtyStock > 0 ? $qtyStock : 0)
-                    );
-
-                    $this->client->send($this->oData->call("ReviseInventoryStatus", $params));
-                } catch (\Exception $e) {
-                    $this->logger->addError($e->getMessage());
-                    $this->logger->addDebug($e->__toString());
-                }
+                $this->updatedProductStocksProductIds[] = $product->getId();
             }
         } catch (\Exception $e) {
             $this->logger->addError($e->getMessage());

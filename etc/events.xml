@@ -7,48 +7,40 @@
 
     <event name="catalog_product_save_after">
         <observer name="viaebay_observer_product_addupdate_after"
-                  instance="VIAeBay\Connector\Observer\Product\Save\After"
-                  shared="true" />
+                  instance="VIAeBay\Connector\Observer\Product\Save\After" />
     </event>
     <event name="catalog_product_delete_before">
         <observer name="viaebay_observer_product_delete"
-                  instance="VIAeBay\Connector\Observer\Product\Delete"
-                  shared="true" />
+                  instance="VIAeBay\Connector\Observer\Product\Delete" />
     </event>
 
     <!-- categories -->
 
     <event name="catalog_category_change_products">
         <observer name="viaebay_observer_category"
-                  instance="VIAeBay\Connector\Observer\Category\Change\Products"
-                  shared="false" />
+                  instance="VIAeBay\Connector\Observer\Category\Change\Products" />
     </event>
 
     <!-- invoice -->
 
     <event name="sales_order_invoice_pay">
         <observer name="viaebay_observer_sales_order_invoice_pay"
-                  instance="VIAeBay\Connector\Observer\Sales\Order\Invoice\Pay"
-                  shared="false" />
+                  instance="VIAeBay\Connector\Observer\Sales\Order\Invoice\Pay" />
     </event>
 
     <!-- stock -->
     <event name="cataloginventory_stock_item_save_after">
         <observer name="viaebay_observer_stock_item_save_after"
-                  instance="VIAeBay\Connector\Observer\CatalogInventory\Stock\Item\Save\After"
-                  shared="false" />
+                  instance="VIAeBay\Connector\Observer\CatalogInventory\Stock\Item\Save\After" />
     </event>
 
     <event name="checkout_submit_all_after">
         <observer name="viaebay_observer_checkout_submit_all_after"
-                  instance="VIAeBay\Connector\Observer\Checkout\Submit\All\After"
-                  shared="false" />
+                  instance="VIAeBay\Connector\Observer\Checkout\Submit\All\After" />
     </event>
 
     <event name="sales_order_item_cancel">
         <observer name="viaebay_observer_sales_order_item_cancel"
-                  instance="VIAeBay\Connector\Observer\Sales\Order\Item\Cancel"
-                  shared="false" />
+                  instance="VIAeBay\Connector\Observer\Sales\Order\Item\Cancel" />
     </event>
-
 </config>

@@ -6,7 +6,6 @@
 namespace VIAeBay\Connector\Observer\CatalogInventory\Stock\Item\Save;
 
 use Magento\CatalogInventory\Api\Data\StockItemInterface;
-use Magento\CatalogInventory\Model\Quote\Item\QuantityValidator\Initializer\StockItem;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use VIAeBay\Connector\Logger\Logger;
@@ -37,7 +36,8 @@ class After implements ObserverInterface
     public function execute(Observer $observer)
     {
         try {
-            $item = $observer->getData('item');
+            $event = $observer->getEvent();
+            $item = $event->getData('item');
 
             if ($item == null && !$item instanceof StockItemInterface) {
                 return;

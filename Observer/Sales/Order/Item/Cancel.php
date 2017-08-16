@@ -5,9 +5,9 @@
 
 namespace VIAeBay\Connector\Observer\Sales\Order\Item;
 
-use Magento\CatalogInventory\Api\Data\StockItemInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
+use Magento\Sales\Api\Data\OrderItemInterface;
 use VIAeBay\Connector\Logger\Logger;
 use VIAeBay\Connector\Service\Product;
 
@@ -37,10 +37,9 @@ class Cancel implements ObserverInterface
     {
         try {
             $event = $observer->getEvent();
-
             $item = $event->getData('item');
 
-            if ($item == null || !($item instanceof StockItemInterface)) {
+            if ($item == null || !($item instanceof OrderItemInterface)) {
                 return;
             }
 

@@ -5,9 +5,9 @@
 
 namespace VIAeBay\Connector\Observer\Checkout\Submit\All;
 
-use Magento\CatalogInventory\Api\Data\StockItemInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
+use Magento\Sales\Api\Data\OrderItemInterface;
 use VIAeBay\Connector\Logger\Logger;
 use VIAeBay\Connector\Service\Product;
 
@@ -36,14 +36,16 @@ class After implements ObserverInterface
     public function execute(Observer $observer)
     {
         try {
-            $items = $observer->getData('order')->getItems();
+            $event = $observer->getEvent();
+            $order = $event->getData('order');
+            $items = $order->getItems();
 
             if ($items == null) {
                 return;
             }
 
             foreach ($items as $item) {
-                if ($item instanceof StockItemInterface) {
+                if ($item instanceof OrderItemInterface) {
                     $this->productService->updateStockById($item->getProductId());
                 }
             }

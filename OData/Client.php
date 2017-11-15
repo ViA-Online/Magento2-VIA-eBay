@@ -97,7 +97,7 @@ class Client
     }
 
     /**
-     * Login to VIA-eBay.
+     * Login to VIA-Connect.
      */
     function login()
     {
@@ -210,6 +210,16 @@ class Client
         }
 
         $response = $this->client->sendAsync($extendedRequest, ['http_errors' => false])->wait(true);
+
+        if ($response != null) {
+            $statusCode = $response->getStatusCode();
+
+            if ($statusCode >= 400 && $statusCode < 500) {
+                throw new LocalizedException(__("Client error %1 %2", $statusCode, $response->getReasonPhrase()));
+            } else if ($statusCode >= 500 && $statusCode < 600) {
+                throw new LocalizedException(__("Server error %1 %2", $statusCode, $response->getReasonPhrase()));
+            }
+        }
 
         return $response;
     }

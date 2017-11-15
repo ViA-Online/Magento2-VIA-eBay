@@ -527,7 +527,7 @@ class Order
             $payment->setMethod('checkmo');
 
             $order->setShippingMethod('freeshipping_freeshipping');
-            $order->setShippingDescription('VIA-eBay Shipping');
+            $order->setShippingDescription('VIA-Connect Shipping');
             $order->setPayment($payment);
             $order->setEmailSent(0);
             $order->setIsVirtual(0);
@@ -771,9 +771,9 @@ class Order
                     ) {
                         try {
                             $this->client->send($this->oData->updateObjectField($salesOrderItem, 'ShippingStatus', '1'));
-                            $this->logger->addInfo(__('VIA-eBay shipping status has been set'), ['via_ebay_order_item' => $salesOrderItem ['Id']]);
+                            $this->logger->addInfo(__('VIA-Connect shipping status has been set'), ['via_ebay_order_item' => $salesOrderItem ['Id']]);
                         } catch (\Exception $e) {
-                            $this->logger->addError(__('VIA-eBay shipping status has not been set'), ['via_ebay_order_item' => $salesOrderItem ['Id']]);
+                            $this->logger->addError(__('VIA-Connect shipping status has not been set'), ['via_ebay_order_item' => $salesOrderItem ['Id']]);
                             $this->logger->addDebug($e->__toString());
                         }
                     }
@@ -795,12 +795,12 @@ class Order
             $viaOrderReference = $this->viaOrderRepository->getByMagentoId($invoice->getOrderId());
             if ($viaOrderReference != null) {
                 $this->client->send($this->oData->updateObjectField('SalesOrders(' . $viaOrderReference->getVIAeBayOrderId() . 'L)', 'PaidAmount', strval($amount)));
-                $this->logger->addInfo(__('VIA-eBay payment status has been set'), ['viaOrderReferenceId' => $viaOrderReference->getId(), 'amount' => $amount]);
+                $this->logger->addInfo(__('VIA-Connect payment status has been set'), ['viaOrderReferenceId' => $viaOrderReference->getId(), 'amount' => $amount]);
             }
         } catch (NoSuchEntityException $e) {
-            $this->logger->addDebug(__('Non VIA-eBay order skipped'), ['orderId' => $invoice->getOrderId(), 'amount' => $amount]);
+            $this->logger->addDebug(__('Non VIA-Connect order skipped'), ['orderId' => $invoice->getOrderId(), 'amount' => $amount]);
         } catch (\Exception $e) {
-            $this->logger->addError(__('VIA-eBay payment status has not been set'), ['orderId' => $invoice->getOrderId(), 'amount' => $amount]);
+            $this->logger->addError(__('VIA-Connect payment status has not been set'), ['orderId' => $invoice->getOrderId(), 'amount' => $amount]);
             $this->logger->addDebug($e->__toString());
         }
     }
@@ -841,7 +841,7 @@ class Order
     }
 
     /**
-     * Resolve productId from VIA-eBay item
+     * Resolve productId from VIA-Connect item
      * @param array $viaItem
      * @return mixed|null
      */
@@ -874,7 +874,7 @@ class Order
     }
 
     /**
-     * Resolve sku from VIA-eBay item.
+     * Resolve sku from VIA-Connect item.
      * @param array $viaItem
      * @return mixed|null
      */

@@ -15,7 +15,7 @@
     </type>
     <type name="VIAeBay\Connector\Logger\Logger">
         <arguments>
-            <argument name="name" xsi:type="string">VIA-eBay</argument>
+            <argument name="name" xsi:type="string">VIA-Connect</argument>
             <argument name="handlers"  xsi:type="array">
                 <item name="a" xsi:type="object">VIAeBay\Connector\Logger\FileHandler</item>
             </argument>

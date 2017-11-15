@@ -10,11 +10,11 @@
                 <resource id="Magento_Backend::stores">
                     <resource id="Magento_Backend::stores_settings">
                         <resource id="Magento_Config::config">
-                            <resource id="VIAeBay_Connector::config" title="VIA-eBay Configuration" sortOrder="50"/>
+                            <resource id="VIAeBay_Connector::config" title="VIA-Connect Configuration" sortOrder="50"/>
                         </resource>
                     </resource>
                 </resource>
-                <resource id="VIAeBay_Connector::top" title="VIA-eBay">
+                <resource id="VIAeBay_Connector::top" title="VIA-Connect">
                     <resource id="VIAeBay_Connector::backlog" title="Backlog"/>
                     <resource id="VIAeBay_Connector::product" title="Products"/>
                     <resource id="VIAeBay_Connector::attribute" title="Attribute">

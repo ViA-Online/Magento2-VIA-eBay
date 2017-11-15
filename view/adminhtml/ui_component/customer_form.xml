@@ -6,7 +6,7 @@
     <fieldset name="viaebay">
         <argument name="data" xsi:type="array">
             <item name="config" xsi:type="array">
-                <item name="label" xsi:type="string" translate="true">VIA-eBay</item>
+                <item name="label" xsi:type="string" translate="true">VIA-Connect</item>
             </item>
         </argument>
         <field name="viaebay_buyer_id">

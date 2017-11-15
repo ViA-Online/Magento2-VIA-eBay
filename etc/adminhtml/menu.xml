@@ -4,7 +4,7 @@
   -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
     <menu>
-        <add id="VIAeBay_Connector::connector" title="VIA-eBay" translate="title" module="VIAeBay_Connector"
+        <add id="VIAeBay_Connector::connector" title="VIA-Connect" translate="title" module="VIAeBay_Connector"
              sortOrder="60" resource="VIAeBay_Connector::connector"/>
 
         <add id="VIAeBay_Connector::viaebay_connector/backlog/product_menu" title="Backlog"

@@ -3,13 +3,13 @@
 "Delete Attribute Mapping","Delete Attribute Mapping"
 "Edit Attribute Mapping '%1'","Edit Attribute Mapping '%1'"
 "Add Attribute Mapping","Add Attribute Mapping"
-"VIA-eBay Attribute Mapping","VIA-eBay Attribute Mapping"
+"VIA-Connect Attribute Mapping","VIA-Connect Attribute Mapping"
 "General Information","General Information"
 "Magento Attribute","Magento Attribute"
-"VIA-eBay Attribute","VIA-eBay Attribute"
+"VIA-Connect Attribute","VIA-Connect Attribute"
 "The attribute mapping has been deleted.","The attribute mapping has been deleted."
 "We can't find a attribute mapping to delete.","We can't find a attribute mapping to delete."
-"Manage VIA-eBay Attribute","Manage VIA-eBay Attribute"
+"Manage VIA-Connect Attribute","Manage VIA-Connect Attribute"
 "This attribute mapping no longer exists.","This attribute mapping no longer exists."
 "Edit Attribute Mapping","Edit Attribute Mapping"
 "New Attribute Mapping","New Attribute Mapping"
@@ -23,7 +23,7 @@ Orders,Orders
 "A total of %1 orders(s) have been imported.","A total of %1 orders(s) have been imported."
 "Order imported.","Order imported."
 "A total of %1 products(s) have been added to backlog.","A total of %1 products(s) have been added to backlog."
-"A total of %1 products(s) have been enabled for listing on VIA-eBay.","A total of %1 products(s) have been enabled for listing on VIA-eBay."
+"A total of %1 products(s) have been enabled for listing on VIA-Connect.","A total of %1 products(s) have been enabled for listing on VIA-Connect."
 "Invalid type given {}","Invalid type given {}"
 "Target cannot be null","Target cannot be null"
 None,None
@@ -74,10 +74,10 @@ syncCategory:children:complete,syncCategory:children:complete
 "Created invoice","Created invoice"
 "Set TrackingNumbers","Set TrackingNumbers"
 "Failed setting TrackingNumbers","Failed setting TrackingNumbers"
-"VIA-eBay shipping status has been set","VIA-eBay shipping status has been set"
-"VIA-eBay shipping status has not been set","VIA-eBay shipping status has not been set"
-"VIA-eBay payment status has been set","VIA-eBay payment status has been set"
-"VIA-eBay payment status has not been set","VIA-eBay payment status has not been set"
+"VIA-Connect shipping status has been set","VIA-Connect shipping status has been set"
+"VIA-Connect shipping status has not been set","VIA-Connect shipping status has not been set"
+"VIA-Connect payment status has been set","VIA-Connect payment status has been set"
+"VIA-Connect payment status has not been set","VIA-Connect payment status has not been set"
 "Product not found","Product not found"
 "Error syncing product","Error syncing product"
 "Product has invalid class %1","Product has invalid class %1"
@@ -115,7 +115,8 @@ Delete,Delete
 "View Product","View Product"
 "View Order","View Order"
 "Import Order","Import Order"
-VIA-eBay,VIA-eBay
+VIA-Connect,VIA-Connect
+VIA-eBay,VIA-Connect
 Connector,Connector
 "Account Settings","Account Settings"
 Enabled,Enabled
@@ -124,9 +125,9 @@ Store,Store
 Username,Username
 Password,Password
 "API Key","API Key"
-"VIA-eBay Aktionen","VIA-eBay Aktionen"
-"List on VIA-eBay","List on VIA-eBay"
-"Delete on VIA-eBay","Delete on VIA-eBay"
+"VIA-Connect Aktionen","VIA-Connect Aktionen"
+"List on VIA-Connect","List on VIA-Connect"
+"Delete on VIA-Connect","Delete on VIA-Connect"
 "Enqueue for listing","Enqueue for listing"
 "Add New Mapping","Add New Mapping"
 ID,ID

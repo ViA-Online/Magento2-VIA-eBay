@@ -1,9 +1,9 @@
-VIA-eBay_Connector
+VIA-Connect_Connector
 ======================
 
-VIAeBay Connector Magento2 extension
+VIA-Connect Connector Magento2 extension
 
-Module integrates VIA-eBay with Magento 2
+Module integrates VIA-Connect with Magento 2
 
 Install
 =======

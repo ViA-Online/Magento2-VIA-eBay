@@ -87,7 +87,7 @@ class MassList extends Action
             }
         }
         $this->messageManager->addSuccessMessage(
-            __('A total of %1 products(s) have been enabled for listing on VIA-eBay.', $productsAddedToBacklog)
+            __('A total of %1 products(s) have been enabled for listing on VIA-Connect.', $productsAddedToBacklog)
         );
 
         return $this->resultFactory->create(ResultFactory::TYPE_REDIRECT)->setPath('catalog/product/index');

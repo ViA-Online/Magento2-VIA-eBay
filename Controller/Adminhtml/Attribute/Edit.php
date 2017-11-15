@@ -76,8 +76,8 @@ class Edit extends Action
         /** @var \Magento\Backend\Model\View\Result\Page $resultPage */
         $resultPage = $this->_resultPageFactory->create();
         $resultPage->setActiveMenu('VIAeBay_Connector::attribute')
-            ->addBreadcrumb(__('VIA-eBay Attribute'), __('VIA-eBay Attribute'))
-            ->addBreadcrumb(__('Manage VIA-eBay Attribute'), __('Manage VIA-eBay Attribute'));
+            ->addBreadcrumb(__('VIA-Connect Attribute'), __('VIA-Connect Attribute'))
+            ->addBreadcrumb(__('Manage VIA-Connect Attribute'), __('Manage VIA-Connect Attribute'));
         return $resultPage;
     }
 

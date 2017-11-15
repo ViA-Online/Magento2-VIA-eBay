@@ -9,7 +9,7 @@
                 <active>1</active>
                 <model>VIAeBay\Connector\Model\Payment\VIAeBayPayment</model>
                 <order_status>pending</order_status>
-                <title>VIA-eBay Payment</title>
+                <title>VIA-Connect Payment</title>
                 <allowspecific>0</allowspecific>
                 <sort_order>1</sort_order>
             </viaebaypayment>
@@ -21,8 +21,8 @@
                 <methods>viaebayshipping</methods>
                 <sallowspecific>0</sallowspecific>
                 <model>VIAeBay\Connector\Model\Carrier\VIAeBayCarrier</model>
-                <name>VIA-eBay Shipping</name>
-                <title>VIA-eBay Shipping</title>
+                <name>VIA-Connect Shipping</name>
+                <title>VIA-Connect Shipping</title>
             </viaebayshipping>
         </carriers>
     </default>

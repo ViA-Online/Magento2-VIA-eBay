@@ -11,18 +11,18 @@
                 <argument name="data" xsi:type="array">
                     <item name="config" xsi:type="array">
                         <item name="type" xsi:type="string">viaebay</item>
-                        <item name="label" xsi:type="string" translate="true">VIA-eBay Aktionen</item>
+                        <item name="label" xsi:type="string" translate="true">VIA-Connect Aktionen</item>
                     </item>
                 </argument>
                 <argument name="actions" xsi:type="array">
                     <item name="0" xsi:type="array">
                         <item name="type" xsi:type="string">list_on_viaebay</item>
-                        <item name="label" xsi:type="string" translate="true">List on VIA-eBay</item>
+                        <item name="label" xsi:type="string" translate="true">List on VIA-Connect</item>
                         <item name="url" xsi:type="url" path="viaebay_connector/product/massList"/>
                     </item>
                     <item name="1" xsi:type="array">
                         <item name="type" xsi:type="string">delete_on_viaebay</item>
-                        <item name="label" xsi:type="string" translate="true">Delete on VIA-eBay</item>
+                        <item name="label" xsi:type="string" translate="true">Delete on VIA-Connect</item>
                         <item name="url" xsi:type="url" path="viaebay_connector/product/massDelete"/>
                     </item>
                     <item name="2" xsi:type="array">

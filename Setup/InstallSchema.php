@@ -28,13 +28,13 @@ class InstallSchema implements InstallSchemaInterface
                 Table::TYPE_INTEGER,
                 null,
                 ['identity' => true, 'unsigned' => true, 'nullable' => false, 'primary' => true],
-                'VIA-eBay Category Id')
+                'VIA-Connect Category Id')
             ->addColumn(
                 'viaebay_id',
                 Table::TYPE_TEXT,
                 null,
                 ['nullable' => true],
-                'VIA-eBay ID'
+                'VIA-Connect ID'
             )
             ->addColumn(
                 'created_at',
@@ -73,7 +73,7 @@ class InstallSchema implements InstallSchemaInterface
                 Table::TYPE_INTEGER,
                 null,
                 ['identity' => true, 'unsigned' => true, 'nullable' => false, 'primary' => true],
-                'VIA-eBay Product Id')
+                'VIA-Connect Product Id')
             ->addColumn(
                 'product_id',
                 Table::TYPE_INTEGER,
@@ -86,7 +86,7 @@ class InstallSchema implements InstallSchemaInterface
                 Table::TYPE_TEXT,
                 null,
                 ['nullable' => true],
-                'VIA-eBay ID'
+                'VIA-Connect ID'
             )
             ->addColumn(
                 'export',
@@ -172,7 +172,7 @@ class InstallSchema implements InstallSchemaInterface
                 Table::TYPE_TEXT,
                 null,
                 ['nullable' => true],
-                'VIA-eBay ID'
+                'VIA-Connect ID'
             )
             ->addColumn(
                 'created_at',
@@ -280,7 +280,7 @@ class InstallSchema implements InstallSchemaInterface
                 Table::TYPE_INTEGER,
                 null,
                 ['unsigned' => true, 'nullable' => false, 'primary' => true],
-                'VIA-eBay Order Id'
+                'VIA-Connect Order Id'
             )
             ->addColumn(
                 'magento_order_id',
@@ -412,7 +412,7 @@ class InstallSchema implements InstallSchemaInterface
                 Table::TYPE_INTEGER,
                 null,
                 ['identity' => true, 'unsigned' => true, 'nullable' => false, 'primary' => true],
-                'VIA-eBay Backlog Product Id')
+                'VIA-Connect Backlog Product Id')
             ->addColumn(
                 'product_id',
                 Table::TYPE_INTEGER,

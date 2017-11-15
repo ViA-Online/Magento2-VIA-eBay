@@ -4,9 +4,9 @@
   -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
     <system>
-        <!-- VIA-eBay Tab -->
+        <!-- VIA-Connect Tab -->
         <tab id="viaebay" translate="label" sortOrder="300">
-            <label>VIA-eBay</label>
+            <label>VIA-Connect</label>
         </tab>
 
         <!-- Connector section -->
@@ -20,13 +20,13 @@
                 <!-- Group configs -->
                 <label>Account Settings</label>
                 <attribute type="expanded">1</attribute>
-                <comment><![CDATA[Please configure your VIA-eBay account information.]]></comment>
+                <comment><![CDATA[Please configure your VIA-Connect account information.]]></comment>
 
                 <!-- Module enable -->
                 <field id="active" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
                     <label>Enabled</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                    <comment><![CDATA[Enable or disable VIA-eBay integration.]]></comment>
+                    <comment><![CDATA[Enable or disable VIA-Connect integration.]]></comment>
                 </field>
 
                 <!-- Store -->

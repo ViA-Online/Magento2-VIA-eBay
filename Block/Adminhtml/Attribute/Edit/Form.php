@@ -67,7 +67,7 @@ class Form extends Generic
     {
         parent::_construct();
         $this->setId('viaebay_attribute_form');
-        $this->setTitle(__('VIA-eBay Attribute Mapping'));
+        $this->setTitle(__('VIA-Connect Attribute Mapping'));
     }
 
     /**
@@ -112,8 +112,8 @@ class Form extends Generic
             'type',
             'select',
             [
-                'label' => __('VIA-eBay Attribute'),
-                'title' => __('VIA-eBay Attribute'),
+                'label' => __('VIA-Connect Attribute'),
+                'title' => __('VIA-Connect Attribute'),
                 'name' => 'type',
                 'required' => true,
                 'options' => $this->_attributeSource->getOptionArray()

@@ -44,7 +44,7 @@ use VIAeBay\Connector\Service\Backlog as VIAProductBacklogService;
 
 
 /**
- * Class Product. Uses to sync products to VIA-eBay.
+ * Class Product. Uses to sync products to VIA-Connect.
  * @package VIAeBay\Connector\Service
  */
 class Product
@@ -343,7 +343,7 @@ class Product
     }
 
     /**
-     * Load single product by id using VIA-eBay store.
+     * Load single product by id using VIA-Connect store.
      *
      * @param int $productId
      * @return MagentoProduct
